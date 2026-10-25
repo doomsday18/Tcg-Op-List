@@ -1,0 +1,23 @@
+CARTE ONE PIECE - INSTALLAZIONE SU IPHONE
+
+1) PUBBLICA I FILE (gratis, da browser, senza Mac)
+   - Crea un account su github.com e un nuovo repository pubblico (es. "carte-op").
+   - "Add file > Upload files": carica TUTTI i file di questa cartella (index.html, manifest.webmanifest, sw.js e le 3 icone .png), poi "Commit changes".
+   - Vai su Settings > Pages > "Deploy from a branch" > branch "main", cartella "/ (root)" > Save.
+   - Dopo uno-due minuti l'indirizzo è https://TUONOME.github.io/carte-op/
+   (Alternativa: trascina la cartella su app.netlify.com/drop.)
+
+2) INSTALLA SULL'IPHONE
+   - Apri l'indirizzo con SAFARI (non con altri browser).
+   - Tocca Condividi (quadrato con freccia) > "Aggiungi a Home" > Aggiungi.
+   - Apri l'app dall'icona sulla Home: va a schermo intero e funziona anche offline.
+
+3) PORTA I TUOI DATI
+   I dati dell'app dentro Claude NON passano da soli alla nuova app.
+   - Nella vecchia app: Dati > Scarica Excel.
+   - Nella nuova app: Dati > Importa e scegli quel file.
+
+NOTE
+   - Fai ogni tanto un backup Excel (Dati > Scarica Excel > "Salva su File").
+   - Non cancellare i dati di Safari/del sito, o perdi la collezione.
+   - Se aggiorni i file su GitHub, chiudi e riapri l'app due volte per vedere la nuova versione.

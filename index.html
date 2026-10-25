@@ -1,0 +1,292 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Le mie carte One Piece</title>
+<meta name="theme-color" content="#021b3a">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Carte OP">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="icon" type="image/png" href="icon-192.png">
+<style>
+:root{--bg:#e6f0fa;--sf:#fff;--tx:#0b2239;--mut:#566f86;--bd:#c4d7ea;--ac:#0a5bb5;--own:#ffc933;--owntx:#2a1f00;--dg:#b3261e;--sh:0 4px 14px rgba(8,52,104,.10);color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#06131f;--sf:#0e2a42;--tx:#e6f1fb;--mut:#8fb0cb;--bd:#1d4467;--ac:#5db3ff;--dg:#ff8a80;--sh:0 4px 14px rgba(0,0,0,.35);color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#06131f;--sf:#0e2a42;--tx:#e6f1fb;--mut:#8fb0cb;--bd:#1d4467;--ac:#5db3ff;--dg:#ff8a80;--sh:0 4px 14px rgba(0,0,0,.35);color-scheme:dark}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--tx);font:16px/1.4 "Trebuchet MS",system-ui,sans-serif;-webkit-tap-highlight-color:transparent}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);background:#021b3a;z-index:30}
+.hero{color:#fff;background:radial-gradient(circle at 85% 10%,rgba(120,200,255,.5),transparent 45%),linear-gradient(160deg,#021b3a,#0a4a9c 55%,#1e8be0);padding:18px 16px 46px;margin-top:calc(-1*env(safe-area-inset-top,0px));padding-top:calc(env(safe-area-inset-top,0px) + 18px)}
+.hero .in{max-width:640px;margin:0 auto;display:flex;align-items:center;gap:14px}
+.hero .tt{flex:1;min-width:0}
+.hero small{letter-spacing:.14em;text-transform:uppercase;font-size:11px;opacity:.8}
+h1{font:700 25px/1.1 Georgia,serif;margin:3px 0 4px}
+.hero p{margin:0;opacity:.88;font-size:13px}
+.ring{--p:0;flex:none;width:84px;height:84px;border-radius:50%;background:conic-gradient(#ffc933 calc(var(--p)*1%),rgba(255,255,255,.22) 0);display:grid;place-items:center}
+.ring div{width:66px;height:66px;border-radius:50%;background:#06295a;display:grid;place-items:center;text-align:center;line-height:1.05}
+.ring b{font:700 17px Georgia,serif;display:block}.ring span{font-size:11px;opacity:.8}
+main{max-width:640px;margin:0 auto;padding:0 12px 130px}
+h2{font:700 20px Georgia,serif;margin:16px 2px 8px;color:var(--ac)}
+button,input,select{font:inherit;color:inherit}
+button{background:var(--sf);border:1px solid var(--bd);border-radius:12px;padding:9px 12px;cursor:pointer;min-height:44px}
+button.p{background:linear-gradient(135deg,#0a5bb5,#1e8be0);border-color:transparent;color:#fff;font-weight:700}
+button.d{color:var(--dg)}
+input{background:var(--sf);border:1px solid var(--bd);border-radius:12px;padding:9px 11px;min-height:44px;width:100%}
+label.f{display:block;font-size:13px;font-weight:700;color:var(--mut);margin-top:10px}
+label.f input{margin-top:4px;font-weight:400;color:var(--tx)}
+.box{background:var(--sf);border:1px solid var(--bd);border-radius:16px;padding:14px;margin-bottom:12px;box-shadow:var(--sh)}
+.box h3{margin:0 0 2px;font-size:17px}
+.row{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px;align-items:center}.row>*{flex:1 1 110px}
+.chk{display:flex;gap:8px;align-items:center;margin-top:12px}.chk input{width:22px;min-height:0;height:22px}
+.mut{color:var(--mut);font-size:14px;margin:4px 0 0}
+details.adv{margin-top:12px}details.adv summary{cursor:pointer;color:var(--ac);font-weight:700;min-height:32px}
+.tools{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:var(--bg);margin:-24px -12px 8px;padding:10px 12px 8px}
+.tools input{box-shadow:var(--sh)}
+.seg{display:flex;gap:6px;margin-top:8px}.seg button{flex:1;min-height:38px;padding:6px;border-radius:20px;font-size:14px}
+.seg button.on{background:var(--ac);border-color:var(--ac);color:#fff;font-weight:700}
+.wrap{padding-top:34px}
+details.s{background:var(--sf);border:1px solid var(--bd);border-left:5px solid var(--ac);border-radius:16px;padding:13px;margin-bottom:10px;box-shadow:var(--sh)}
+details.s>summary{cursor:pointer;list-style:none;display:grid;grid-template-columns:1fr auto;gap:2px 10px;align-items:baseline;min-height:44px}
+details.s>summary::-webkit-details-marker{display:none}
+details.s>summary>span:first-child{font:700 20px Georgia,serif;color:var(--ac)}
+details.s .n{color:var(--mut);font-size:14px}
+details.s .cnt{grid-row:1;grid-column:2;font-weight:700;font-variant-numeric:tabular-nums}
+.bar{grid-column:1/3;height:8px;border-radius:4px;background:var(--bd);overflow:hidden;margin-top:6px}
+.bar u{display:block;height:100%;background:linear-gradient(90deg,#ffb300,#ffe07a)}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(92px,1fr));gap:6px;margin-top:12px}
+.chip{padding:8px 4px;font-size:14px;text-align:center;min-height:46px;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none;touch-action:manipulation}
+.chip.on{background:linear-gradient(135deg,#ffc933,#ffe07a);border-color:#e0a800;color:var(--owntx);font-weight:700}
+.chip i{font-style:normal;margin-left:3px}.chip small{display:block;font-size:11px;font-weight:400;opacity:.8}
+.hint{font-size:13px;color:var(--mut);margin:10px 0 0}
+.empty{text-align:center;color:var(--mut);padding:30px 10px}.empty .row{justify-content:center}
+nav{position:fixed;left:0;right:0;bottom:0;z-index:25;background:var(--sf);border-top:1px solid var(--bd);display:flex;padding:6px 6px calc(6px + env(safe-area-inset-bottom,0px))}
+nav button{flex:1;border:0;background:none;display:grid;gap:0;justify-items:center;font-size:12px;color:var(--mut);min-height:50px;line-height:1.2}
+nav button b{font-size:21px;font-weight:400}nav button.on{color:var(--ac);font-weight:700}
+#toast{position:fixed;left:12px;right:12px;bottom:calc(76px + env(safe-area-inset-bottom,0px));max-width:616px;margin:auto;background:#10263b;color:#fff;border-radius:14px;padding:6px 8px 6px 14px;display:flex;align-items:center;gap:8px;z-index:40;box-shadow:0 6px 20px rgba(0,0,0,.3)}
+#toast span{flex:1;font-size:14px}#toast button{background:none;border:0;color:#7fc4ff;font-weight:700;min-height:40px}
+.sheet{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:50;display:flex;align-items:flex-end}
+.sheet .c{background:var(--sf);width:100%;max-width:640px;margin:auto auto 0;border-radius:20px 20px 0 0;padding:18px 16px calc(18px + env(safe-area-inset-bottom,0px))}
+.sheet h3{margin:0;font:700 20px Georgia,serif}
+.step{display:flex;align-items:center;justify-content:center;gap:22px;margin:14px 0}
+.step button{width:56px;height:56px;font-size:26px;border-radius:50%}.step b{font:700 34px Georgia,serif;min-width:48px;text-align:center}
+textarea{width:100%;min-height:90px;background:var(--sf);border:1px solid var(--bd);border-radius:12px;color:inherit;padding:8px;font:13px monospace;margin-top:10px}
+[hidden]{display:none!important}
+button:focus-visible,input:focus-visible,summary:focus-visible{outline:2px solid var(--ac);outline-offset:2px}
+</style>
+</head>
+<body>
+<header class="hero"><div class="in">
+<div class="tt"><small>Grand Line · Collezione</small><h1>Le mie carte One Piece</h1><p id="sub"></p></div>
+<div class="ring" id="ring"><div><span><b id="tot">0/0</b><span id="pct"></span></span></div></div>
+</div></header>
+
+<main>
+<section id="v-col">
+<div class="tools">
+<input id="q" type="search" placeholder="Cerca una carta (es. OP01-016)" autocapitalize="characters" autocomplete="off" aria-label="Cerca una carta">
+<div class="seg" id="seg"><button data-f="all" class="on">Tutte</button><button data-f="miss">Mancanti</button><button data-f="own">Possedute</button></div>
+</div>
+<div class="wrap"><div id="list"></div>
+<p class="hint" id="hint">Tocca una carta per segnarla come posseduta · tienila premuta per cambiare la quantità.</p></div>
+</section>
+
+<section id="v-add" hidden>
+<h2>Aggiungi</h2>
+<div class="box"><h3>Nuova serie</h3>
+<p class="mut">Crea tutte le carte da 001 fino al numero indicato.</p>
+<label class="f">Codice serie<input id="sc" placeholder="es. OP01" autocapitalize="characters"></label>
+<label class="f">Numero di carte<input id="sn" type="number" inputmode="numeric" placeholder="es. 121"></label>
+<label class="f">Nome (facoltativo)<input id="snm" placeholder="es. Romance Dawn"></label>
+<div class="row"><button class="p" id="addS">Crea serie</button></div></div>
+
+<div class="box"><h3>Singola carta</h3>
+<label class="f">Codice carta<input id="cc" placeholder="es. OP01-016" autocapitalize="characters"></label>
+<label class="chk"><input type="checkbox" id="cown"> Ce l’ho già</label>
+<details class="adv"><summary>Versioni extra o ristampe</summary>
+<label class="f">Versioni extra (alternative, parallele)<input id="cv" type="number" inputmode="numeric" min="0" max="9" placeholder="es. 1 → OP01-016_P1"></label>
+<label class="f">Ristampa trovata nella serie<input id="cf" placeholder="es. OP04 → OP04-016_R-OP01_1" autocapitalize="characters"></label>
+<p class="mut">Per una ristampa scrivi sopra il codice originale e qui la serie dove l’hai trovata.</p></details>
+<div class="row"><button class="p" id="addC">Aggiungi</button><button class="d" id="remC">Rimuovi</button></div>
+<p class="mut">«Rimuovi» elimina il codice completo scritto sopra.</p></div>
+</section>
+
+<section id="v-data" hidden>
+<h2>Dati e backup</h2>
+<div class="box"><h3>Importa da Excel o CSV</h3>
+<p class="mut">Una carta per riga: codice nella prima colonna, quantità nella seconda (0 = non posseduta). Senza quantità la carta risulta posseduta. Le serie nuove vengono create da sole. Il file del backup si reimporta così com’è.</p>
+<div class="row"><input type="file" id="file" accept=".xlsx,.xls,.csv"></div></div>
+<div class="box"><h3>Backup</h3>
+<p class="mut">I dati restano salvati in questo browser: scarica un backup ogni tanto.</p>
+<div class="row"><button class="p" id="xl">Scarica Excel (.xlsx)</button></div>
+<textarea id="bk" placeholder="Qui compare il backup in testo; per ripristinare incollalo qui."></textarea>
+<div class="row"><button id="mk">Crea backup testo</button><button id="rs">Ripristina da testo</button></div></div>
+</section>
+</main>
+
+<div id="toast" hidden role="status"><span id="tm"></span><button id="tu">Annulla</button></div>
+<div class="sheet" id="sh" hidden><div class="c" role="dialog" aria-modal="true">
+<h3 id="shT"></h3><p class="mut">Quante copie possiedi?</p>
+<div class="step"><button id="mi" aria-label="Meno">−</button><b id="shN">0</b><button id="pl" aria-label="Più">＋</button></div>
+<div class="row"><button class="d" id="shR">Rimuovi carta</button><button class="p" id="shX">Fatto</button></div></div></div>
+
+<nav id="nav"><button data-v="col" class="on"><b>📚</b>Collezione</button><button data-v="add"><b>＋</b>Aggiungi</button><button data-v="data"><b>💾</b>Dati</button></nav>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script>
+const K="op-cards-v1";
+let D={series:{}},flt="all",Q="",DL=null,tt=null,cur=null;const open=new Set();
+try{const s=localStorage.getItem(K);if(s)D=JSON.parse(s)}catch(e){}
+const $=id=>document.getElementById(id);
+const RE=/^([A-Z]{1,4}\d{2})-(\d{3})(_P\d+)?(_R-[A-Z]{1,4}\d{2}_\d+)?$/;
+const lab=c=>{const r=c.match(/^(.*)_R-([A-Z]{1,4}\d{2})_(\d+)$/);return r?r[1]+"<small>ristampa "+r[2]+" n."+r[3]+"</small>":c};
+const norm=c=>String(c==null?"":c).trim().toUpperCase().replace(/\s+/g,"").replace(/[–—−]/g,"-").replace(/^(.*-\d{3})[_#-]?P(\d+)$/,"$1_P$2").replace(/^(.*-\d{3})_?R[-_]?([A-Z]{1,4}\d{2})[_-]?(\d+)$/,"$1_R-$2_$3");
+const esc=t=>String(t).replace(/[&<>"]/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[m]));
+function save(){try{localStorage.setItem(K,JSON.stringify(D))}catch(e){}}
+function ensure(k,name){if(!D.series[k])D.series[k]={name:name||"",cards:{}};else if(name)D.series[k].name=name;return D.series[k]}
+function toast(t,snap){
+  $("tm").textContent=t;$("tu").hidden=!snap;$("toast").hidden=false;$("toast")._s=snap;
+  clearTimeout(tt);tt=setTimeout(()=>$("toast").hidden=true,6000);
+}
+$("tu").onclick=()=>{const s=$("toast")._s;if(s){D=JSON.parse(s);save();render();toast("Azione annullata.")}};
+function mut(fn,msg){const s=JSON.stringify(D);fn();save();render();toast(msg,s)}
+function view(v){
+  ["col","add","data"].forEach(x=>{$("v-"+x).hidden=x!==v});
+  document.querySelectorAll("#nav button").forEach(b=>b.classList.toggle("on",b.dataset.v===v));
+  scrollTo(0,0);
+}
+$("nav").onclick=e=>{const b=e.target.closest("button");if(b)view(b.dataset.v)};
+
+function render(){
+  const ks=Object.keys(D.series).sort();let T=0,O=0,h="";
+  ks.forEach(k=>{
+    const s=D.series[k],all=Object.keys(s.cards).sort((a,b)=>(a.includes("_R-")-b.includes("_R-"))||(a<b?-1:a>b?1:0));
+    const o=all.filter(c=>s.cards[c]>0).length;T+=all.length;O+=o;
+    const cs=all.filter(c=>(flt=="all"||(flt=="miss")!=(s.cards[c]>0))&&(!Q||c.includes(Q)));
+    if(Q&&!cs.length)return;
+    const p=all.length?Math.round(o/all.length*100):0;
+    const chips=cs.map(c=>`<button class="chip ${s.cards[c]>0?"on":""}" data-a="t" data-s="${k}" data-c="${c}">${s.cards[c]>0?"✓ ":""}${lab(c)}${s.cards[c]>1?`<i>×${s.cards[c]}</i>`:""}</button>`).join("");
+    h+=`<details class="s" data-k="${k}" ${open.has(k)||Q?"open":""}><summary><span>${k}</span><span class="cnt">${o}/${all.length}</span><span class="n">${esc(s.name||"")}${p==100?" · Completa 🏆":""}</span><div class="bar"><u style="width:${p}%"></u></div></summary>
+    <div class="grid">${chips||`<p class="mut" style="grid-column:1/-1">Nessuna carta da mostrare con questo filtro.</p>`}</div>
+    <div class="row"><button data-a="all" data-s="${k}">Le ho tutte</button><button data-a="cp" data-s="${k}">Copia mancanti</button><button data-a="none" data-s="${k}">Azzera</button><button class="d" data-a="del" data-s="${k}">Elimina serie</button></div></details>`;
+  });
+  if(!ks.length)h=`<div class="empty"><p><b>Benvenuto!</b><br>Inizia creando una serie o importando il tuo file Excel.</p><div class="row"><button class="p" data-go="add">Crea una serie</button><button data-go="data">Importa file</button></div></div>`;
+  else if(!h)h=`<div class="empty">Nessuna carta trovata${Q?" per «"+esc(Q)+"»":""}.</div>`;
+  $("list").innerHTML=h;$("hint").hidden=!ks.length;
+  const pc=T?Math.round(O/T*100):0;
+  $("tot").textContent=O+"/"+T;$("pct").textContent=T?pc+"%":"";$("ring").style.setProperty("--p",pc);
+  $("sub").textContent=T?"Ti mancano "+(T-O)+" carte.":"Tieni traccia delle tue carte, serie per serie.";
+}
+$("q").oninput=e=>{Q=norm(e.target.value);render()};
+$("seg").onclick=e=>{const b=e.target.closest("button");if(!b)return;flt=b.dataset.f;document.querySelectorAll("#seg button").forEach(x=>x.classList.toggle("on",x===b));render()};
+
+let lp=null,lpd=false;
+$("list").addEventListener("pointerdown",e=>{const b=e.target.closest(".chip");if(!b)return;lpd=false;lp=setTimeout(()=>{lpd=true;navigator.vibrate&&navigator.vibrate(15);sheet(b.dataset.s,b.dataset.c)},450)});
+["pointerup","pointerleave","pointercancel"].forEach(t=>$("list").addEventListener(t,()=>clearTimeout(lp)));
+$("list").addEventListener("contextmenu",e=>{if(e.target.closest(".chip"))e.preventDefault()});
+$("list").onclick=async e=>{
+  const g=e.target.closest("[data-go]");if(g)return view(g.dataset.go);
+  const b=e.target.closest("[data-a]");if(!b)return;
+  if(lpd){lpd=false;return}
+  const a=b.dataset.a,s=b.dataset.s,cs=D.series[s].cards;
+  if(a=="t"){const c=b.dataset.c;cs[c]=cs[c]>0?0:1;save();render()}
+  else if(a=="all")mut(()=>{for(const k in cs)cs[k]=Math.max(1,cs[k])},"Serie "+s+": le hai tutte.");
+  else if(a=="none")mut(()=>{for(const k in cs)cs[k]=0},"Serie "+s+" azzerata.");
+  else if(a=="del")mut(()=>{delete D.series[s];open.delete(s)},"Serie "+s+" eliminata.");
+  else if(a=="cp"){
+    const l=Object.keys(cs).filter(k=>!(cs[k]>0)).sort().join("\n");
+    if(!l)return toast("Non ti manca nessuna carta!");
+    try{await navigator.clipboard.writeText(l);toast("Lista delle mancanti copiata.")}catch(err){toast("Non riesco a copiare negli appunti qui.")}
+  }
+};
+$("list").addEventListener("toggle",e=>{const k=e.target.dataset&&e.target.dataset.k;if(!k)return;e.target.open?open.add(k):open.delete(k)},true);
+
+function sheet(s,c){cur={s,c};$("shT").textContent=c;$("shN").textContent=D.series[s].cards[c]||0;$("sh").hidden=false}
+function setQ(n){D.series[cur.s].cards[cur.c]=Math.max(0,Math.min(99,n));$("shN").textContent=D.series[cur.s].cards[cur.c];save();render()}
+$("mi").onclick=()=>setQ((D.series[cur.s].cards[cur.c]||0)-1);
+$("pl").onclick=()=>setQ((D.series[cur.s].cards[cur.c]||0)+1);
+$("shX").onclick=()=>{$("sh").hidden=true};
+$("sh").onclick=e=>{if(e.target.id=="sh")$("sh").hidden=true};
+$("shR").onclick=()=>{const{s,c}=cur;$("sh").hidden=true;mut(()=>{delete D.series[s].cards[c]},"Carta "+c+" rimossa.")};
+
+$("addS").onclick=()=>{
+  const c=norm($("sc").value).replace(/-.*/,"");
+  if(!/^[A-Z]{1,4}\d{2}$/.test(c))return toast("Codice serie non valido. Esempio: OP01, ST01, EB01.");
+  const n=Math.min(300,parseInt($("sn").value)||0);
+  if(n<1)return toast("Indica quante carte ha la serie.");
+  const s=ensure(c,$("snm").value.trim());
+  for(let i=1;i<=n;i++){const code=c+"-"+String(i).padStart(3,"0");if(!(code in s.cards))s.cards[code]=0}
+  open.add(c);save();render();$("sc").value=$("sn").value=$("snm").value="";view("col");toast("Serie "+c+" creata con "+n+" carte.");
+};
+$("addC").onclick=()=>{
+  const f=norm($("cf").value),x=Math.min(9,parseInt($("cv").value)||0);
+  let code=norm($("cc").value);
+  if(f){const o=code.match(/^([A-Z]{1,4}\d{2})-(\d{3})$/);if(!o||!/^[A-Z]{1,4}\d{2}$/.test(f))return toast("Per una ristampa scrivi il codice originale (es. OP01-016) e la serie dove l’hai trovata (es. OP04).");code=f+"-"+o[2]+"_R-"+o[1]+"_1"}
+  const m=code.match(RE);
+  if(!m)return toast("Codice non valido. Esempio: OP01-016.");
+  const g=m[1],s=ensure(g),keys=[],base=m[1]+"-"+m[2];
+  if(m[4]){const pre=code.replace(/_\d+$/,"_");let n=1;const nx=()=>{while(pre+n in s.cards||keys.includes(pre+n))n++;return pre+n};
+    keys.push(f?nx():code);for(let i=1;i<=x;i++)keys.push(nx())}
+  else{keys.push(code);for(let i=1;i<=x;i++)keys.push(base+"_P"+i)}
+  keys.forEach(k=>{s.cards[k]=$("cown").checked?Math.max(1,s.cards[k]||0):(s.cards[k]||0)});
+  open.add(g);save();render();$("cc").value=$("cv").value=$("cf").value="";
+  toast(keys.length>1?"Aggiunte "+keys.length+" versioni di "+base+".":"Carta "+keys[0]+" aggiunta.");
+};
+$("remC").onclick=()=>{
+  const code=norm($("cc").value),m=code.match(RE),g=m&&m[1];
+  if(!m||!D.series[g]||!(code in D.series[g].cards))return toast("Carta non trovata.");
+  mut(()=>{delete D.series[g].cards[code]},"Carta "+code+" rimossa.");$("cc").value="";
+};
+
+$("file").onchange=async e=>{
+  const f=e.target.files[0];if(!f)return;
+  try{
+    const wb=XLSX.read(await f.arrayBuffer(),{type:"array"}),snap=JSON.stringify(D);
+    let n=0,series=new Set();
+    wb.SheetNames.forEach(sn=>{
+      XLSX.utils.sheet_to_json(wb.Sheets[sn],{header:1,defval:""}).forEach(r=>{
+        if(sn==="Serie"){const k=norm(r[0]);if(/^[A-Z]{1,4}\d{2}$/.test(k)&&r[1]){ensure(k,String(r[1]).trim())}return}
+        const i=r.findIndex(c=>RE.test(norm(c)));if(i<0)return;
+        const code=norm(r[i]),m=code.match(RE),v=r[i+1];
+        let q=1;
+        if(v!==""&&v!==undefined){
+          const x=Number(String(v).replace(",","."));
+          if(!isNaN(x))q=Math.max(0,Math.floor(x));
+          else q=/^(no|n|false|f|-|x?no)$/i.test(String(v).trim())?0:1;
+        }
+        ensure(m[1]).cards[code]=q;series.add(m[1]);n++;
+      });
+    });
+    save();render();
+    if(n){view("col");toast("Importate "+n+" carte in "+series.size+" serie.",snap)}else toast("Nessun codice carta trovato nel file.");
+  }catch(err){toast("Non riesco a leggere il file. Usa .xlsx, .xls o .csv.")}
+  e.target.value="";
+};
+$("mk").onclick=()=>{$("bk").value=JSON.stringify(D);$("bk").select();toast("Backup creato: copia il testo.")};
+$("rs").onclick=()=>{
+  try{const d=JSON.parse($("bk").value);if(!d||typeof d.series!=="object")throw 0;const s=JSON.stringify(D);D=d;save();render();view("col");toast("Collezione ripristinata.",s)}
+  catch(e){toast("Backup non valido.")}
+};
+$("xl").onclick=async()=>{
+  if(typeof XLSX==="undefined")return toast("Libreria Excel non caricata: riprova con la connessione attiva.");
+  const ks=Object.keys(D.series).sort(),rows=[["Codice","Quantità","Serie"]],names=[["Serie","Nome"]];
+  ks.forEach(k=>{names.push([k,D.series[k].name||""]);Object.keys(D.series[k].cards).sort().forEach(c=>rows.push([c,D.series[k].cards[c],k]))});
+  if(rows.length<2)return toast("Non ci sono carte da salvare.");
+  try{
+    const wb=XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb,XLSX.utils.aoa_to_sheet(rows),"Carte");
+    XLSX.utils.book_append_sheet(wb,XLSX.utils.aoa_to_sheet(names),"Serie");
+    const buf=XLSX.write(wb,{bookType:"xlsx",type:"array"});
+    const name="carte-one-piece-"+new Date().toISOString().slice(0,10)+".xlsx";
+    const file=new File([buf],name,{type:"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"});
+    if(navigator.canShare&&navigator.canShare({files:[file]})){await navigator.share({files:[file]});toast("Backup pronto: scegli «Salva su File».")}
+    else{const u=URL.createObjectURL(file),a=document.createElement("a");a.href=u;a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(u),4000);toast("Backup Excel scaricato.")}
+  }catch(err){toast(err&&err.name==="AbortError"?"Salvataggio annullato.":"Non riesco a creare il file Excel.")}
+};
+if("serviceWorker" in navigator)addEventListener("load",()=>navigator.serviceWorker.register("sw.js").catch(()=>{}));
+render();
+</script>
+</body>
+</html>
