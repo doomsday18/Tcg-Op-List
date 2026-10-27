@@ -4,14 +4,6 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Le mie carte One Piece</title>
-<meta name="theme-color" content="#021b3a">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="Carte OP">
-<link rel="manifest" href="manifest.webmanifest">
-<link rel="apple-touch-icon" href="apple-touch-icon.png">
-<link rel="icon" type="image/png" href="icon-192.png">
 <style>
 :root{--bg:#e6f0fa;--sf:#fff;--tx:#0b2239;--mut:#566f86;--bd:#c4d7ea;--ac:#0a5bb5;--own:#ffc933;--owntx:#2a1f00;--dg:#b3261e;--sh:0 4px 14px rgba(8,52,104,.10);color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#06131f;--sf:#0e2a42;--tx:#e6f1fb;--mut:#8fb0cb;--bd:#1d4467;--ac:#5db3ff;--dg:#ff8a80;--sh:0 4px 14px rgba(0,0,0,.35);color-scheme:dark}}
@@ -56,7 +48,7 @@ details.s .n{color:var(--mut);font-size:14px}
 details.s .cnt{grid-row:1;grid-column:2;font-weight:700;font-variant-numeric:tabular-nums}
 .bar{grid-column:1/3;height:8px;border-radius:4px;background:var(--bd);overflow:hidden;margin-top:6px}
 .bar u{display:block;height:100%;background:linear-gradient(90deg,#ffb300,#ffe07a)}
-.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(92px,1fr));gap:6px;margin-top:12px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(76px,1fr));gap:6px;margin-top:12px}
 .chip{padding:8px 4px;font-size:14px;text-align:center;min-height:46px;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none;touch-action:manipulation}
 .chip.on{background:linear-gradient(135deg,#ffc933,#ffe07a);border-color:#e0a800;color:var(--owntx);font-weight:700}
 .chip i{font-style:normal;margin-left:3px}.chip small{display:block;font-size:11px;font-weight:400;opacity:.8}
@@ -73,6 +65,18 @@ nav button b{font-size:21px;font-weight:400}nav button.on{color:var(--ac);font-w
 .step{display:flex;align-items:center;justify-content:center;gap:22px;margin:14px 0}
 .step button{width:56px;height:56px;font-size:26px;border-radius:50%}.step b{font:700 34px Georgia,serif;min-width:48px;text-align:center}
 textarea{width:100%;min-height:90px;background:var(--sf);border:1px solid var(--bd);border-radius:12px;color:inherit;padding:8px;font:13px monospace;margin-top:10px}
+.sc{display:grid;grid-template-columns:1fr auto;gap:2px 10px;align-items:baseline;width:100%;text-align:left;background:var(--sf);border:1px solid var(--bd);border-left:5px solid var(--ac);border-radius:16px;padding:13px;margin-bottom:10px;box-shadow:var(--sh)}
+.sc.done{border-left-color:var(--own)}
+.sc .sk{font:700 20px Georgia,serif;color:var(--ac)}.sc .cnt{font-weight:700;font-variant-numeric:tabular-nums}.sc .n{color:var(--mut);font-size:14px}
+.stop{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:var(--bg);margin:0 -12px;padding:8px 12px;display:flex;align-items:center;gap:10px;border-bottom:1px solid var(--bd)}
+.stop .bk{flex:none;background:var(--ac);border-color:var(--ac);color:#fff;font-weight:700;padding:9px 14px}
+.stop .st{flex:1;min-width:0;display:grid;line-height:1.15}.stop .st b{font:700 20px Georgia,serif;color:var(--ac)}.stop .st span{font-size:13px;color:var(--mut);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.stop .cnt{font-weight:700;font-variant-numeric:tabular-nums}
+.bar.sb{margin:0 0 8px;border-radius:0}
+.seg+.grid{margin-top:10px}
+.chip{overflow-wrap:anywhere}
+@media (max-width:420px){main{padding-left:8px;padding-right:8px}.stop{margin:0 -8px;padding:8px}h1{font-size:22px}.grid{gap:5px}.chip{font-size:13px;padding:6px 2px}}
+select{background:var(--sf);border:1px solid var(--bd);border-radius:12px;padding:9px 11px;min-height:44px;width:100%;color:inherit}label.f select{margin-top:4px;font-weight:400}
 [hidden]{display:none!important}
 button:focus-visible,input:focus-visible,summary:focus-visible{outline:2px solid var(--ac);outline-offset:2px}
 </style>
@@ -85,7 +89,7 @@ button:focus-visible,input:focus-visible,summary:focus-visible{outline:2px solid
 
 <main>
 <section id="v-col">
-<div class="tools">
+<div class="tools" id="tools">
 <input id="q" type="search" placeholder="Cerca una carta (es. OP01-016)" autocapitalize="characters" autocomplete="off" aria-label="Cerca una carta">
 <div class="seg" id="seg"><button data-f="all" class="on">Tutte</button><button data-f="miss">Mancanti</button><button data-f="own">Possedute</button></div>
 </div>
@@ -105,12 +109,25 @@ button:focus-visible,input:focus-visible,summary:focus-visible{outline:2px solid
 <div class="box"><h3>Singola carta</h3>
 <label class="f">Codice carta<input id="cc" placeholder="es. OP01-016" autocapitalize="characters"></label>
 <label class="chk"><input type="checkbox" id="cown"> Ce l’ho già</label>
-<details class="adv"><summary>Versioni extra o ristampe</summary>
-<label class="f">Versioni extra (alternative, parallele)<input id="cv" type="number" inputmode="numeric" min="0" max="9" placeholder="es. 1 → OP01-016_P1"></label>
-<label class="f">Ristampa trovata nella serie<input id="cf" placeholder="es. OP04 → OP04-016_R-OP01_1" autocapitalize="characters"></label>
-<p class="mut">Per una ristampa scrivi sopra il codice originale e qui la serie dove l’hai trovata.</p></details>
 <div class="row"><button class="p" id="addC">Aggiungi</button><button class="d" id="remC">Rimuovi</button></div>
 <p class="mut">«Rimuovi» elimina il codice completo scritto sopra.</p></div>
+
+<div class="box"><h3>Duplicati, extra e ristampe</h3>
+<p class="mut">Scegli la carta e quante copie hai: il codice lo creo io.</p>
+<div class="seg" id="dT"><button data-t="x" class="on">Versione extra</button><button data-t="r">Ristampa</button></div>
+<label class="f">Serie della carta<select id="dS"></select></label>
+<label class="f">Carta da duplicare<select id="dC"></select></label>
+<label class="f" id="dFw" hidden>Serie dove hai trovato la ristampa<input id="dF" list="dL" placeholder="es. OP04" autocapitalize="characters" autocomplete="off"></label>
+<datalist id="dL"></datalist>
+<label class="f">Quante copie<input id="dN" type="number" inputmode="numeric" min="1" max="20" value="1"></label>
+<label class="chk"><input type="checkbox" id="dO" checked> Le possiedo già</label>
+<p class="mut" id="dP"></p>
+<div class="row"><button class="p" id="dA">Aggiungi</button></div></div>
+
+<div class="box"><h3>Rimuovi duplicati o ristampe</h3>
+<p class="mut">Scegli dall’elenco la versione extra o la ristampa da eliminare.</p>
+<label class="f">Versione da rimuovere<select id="rX"></select></label>
+<div class="row"><button class="d" id="rXb">Rimuovi</button></div></div>
 </section>
 
 <section id="v-data" hidden>
@@ -120,7 +137,7 @@ button:focus-visible,input:focus-visible,summary:focus-visible{outline:2px solid
 <div class="row"><input type="file" id="file" accept=".xlsx,.xls,.csv"></div></div>
 <div class="box"><h3>Backup</h3>
 <p class="mut">I dati restano salvati in questo browser: scarica un backup ogni tanto.</p>
-<div class="row"><button class="p" id="xl">Scarica Excel (.xlsx)</button></div>
+<div class="row"><button class="p" id="xl" hidden>Scarica Excel (.xlsx)</button></div>
 <textarea id="bk" placeholder="Qui compare il backup in testo; per ripristinare incollalo qui."></textarea>
 <div class="row"><button id="mk">Crea backup testo</button><button id="rs">Ripristina da testo</button></div></div>
 </section>
@@ -137,7 +154,7 @@ button:focus-visible,input:focus-visible,summary:focus-visible{outline:2px solid
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <script>
 const K="op-cards-v1";
-let D={series:{}},flt="all",Q="",DL=null,tt=null,cur=null;const open=new Set();
+let D={series:{}},flt="all",Q="",DL=null,tt=null,cur=null,CS=null;const open=new Set();
 try{const s=localStorage.getItem(K);if(s)D=JSON.parse(s)}catch(e){}
 const $=id=>document.getElementById(id);
 const RE=/^([A-Z]{1,4}\d{2})-(\d{3})(_P\d+)?(_R-[A-Z]{1,4}\d{2}_\d+)?$/;
@@ -157,23 +174,38 @@ function view(v){
   document.querySelectorAll("#nav button").forEach(b=>b.classList.toggle("on",b.dataset.v===v));
   scrollTo(0,0);
 }
-$("nav").onclick=e=>{const b=e.target.closest("button");if(b)view(b.dataset.v)};
+$("nav").onclick=e=>{const b=e.target.closest("button");if(!b)return;if(b.dataset.v==="col"&&CS){CS=null;render()}view(b.dataset.v)};
 
-function render(){
+function info(k){const s=D.series[k],all=Object.keys(s.cards).sort((a,b)=>(a.includes("_R-")-b.includes("_R-"))||(a<b?-1:a>b?1:0));return{s,all,o:all.filter(c=>s.cards[c]>0).length}}
+function render(){fillSel();fillX();
   const ks=Object.keys(D.series).sort();let T=0,O=0,h="";
-  ks.forEach(k=>{
-    const s=D.series[k],all=Object.keys(s.cards).sort((a,b)=>(a.includes("_R-")-b.includes("_R-"))||(a<b?-1:a>b?1:0));
-    const o=all.filter(c=>s.cards[c]>0).length;T+=all.length;O+=o;
+  ks.forEach(k=>{const i=info(k);T+=i.all.length;O+=i.o});
+  if(CS&&!D.series[CS])CS=null;
+  const inS=!!CS;
+  document.querySelector(".hero").hidden=inS;$("tools").hidden=inS;
+  document.querySelector(".wrap").style.paddingTop=inS?"0":"";
+  document.querySelectorAll("#seg button").forEach(x=>x.classList.toggle("on",x.dataset.f===flt));
+  if(inS){
+    const{s,all,o}=info(CS),p=all.length?Math.round(o/all.length*100):0;
     const cs=all.filter(c=>(flt=="all"||(flt=="miss")!=(s.cards[c]>0))&&(!Q||c.includes(Q)));
-    if(Q&&!cs.length)return;
-    const p=all.length?Math.round(o/all.length*100):0;
-    const chips=cs.map(c=>`<button class="chip ${s.cards[c]>0?"on":""}" data-a="t" data-s="${k}" data-c="${c}">${s.cards[c]>0?"✓ ":""}${lab(c)}${s.cards[c]>1?`<i>×${s.cards[c]}</i>`:""}</button>`).join("");
-    h+=`<details class="s" data-k="${k}" ${open.has(k)||Q?"open":""}><summary><span>${k}</span><span class="cnt">${o}/${all.length}</span><span class="n">${esc(s.name||"")}${p==100?" · Completa 🏆":""}</span><div class="bar"><u style="width:${p}%"></u></div></summary>
+    const chips=cs.map(c=>`<button class="chip ${s.cards[c]>0?"on":""}" data-a="t" data-s="${CS}" data-c="${c}">${s.cards[c]>0?"✓ ":""}${lab(c)}${s.cards[c]>1?`<i>×${s.cards[c]}</i>`:""}</button>`).join("");
+    const sg=[["all","Tutte"],["miss","Mancanti"],["own","Possedute"]].map(x=>`<button data-f="${x[0]}" class="${flt==x[0]?"on":""}">${x[1]}</button>`).join("");
+    h=`<div class="stop"><button class="bk" data-back="1" aria-label="Torna alla home">‹ Home</button><div class="st"><b>${CS}${p==100?" 🏆":""}</b><span>${esc(s.name||"")}</span></div><span class="cnt">${o}/${all.length}</span></div>
+    <div class="bar sb"><u style="width:${p}%"></u></div>
+    <div class="seg">${sg}</div>
     <div class="grid">${chips||`<p class="mut" style="grid-column:1/-1">Nessuna carta da mostrare con questo filtro.</p>`}</div>
-    <div class="row"><button data-a="all" data-s="${k}">Le ho tutte</button><button data-a="cp" data-s="${k}">Copia mancanti</button><button data-a="none" data-s="${k}">Azzera</button><button class="d" data-a="del" data-s="${k}">Elimina serie</button></div></details>`;
-  });
-  if(!ks.length)h=`<div class="empty"><p><b>Benvenuto!</b><br>Inizia creando una serie o importando il tuo file Excel.</p><div class="row"><button class="p" data-go="add">Crea una serie</button><button data-go="data">Importa file</button></div></div>`;
-  else if(!h)h=`<div class="empty">Nessuna carta trovata${Q?" per «"+esc(Q)+"»":""}.</div>`;
+    <div class="row"><button data-a="all" data-s="${CS}">Le ho tutte</button><button data-a="cp" data-s="${CS}">Copia mancanti</button><button data-a="none" data-s="${CS}">Azzera</button><button class="d" data-a="del" data-s="${CS}">Elimina serie</button></div>
+    <div class="row"><button class="p" data-back="1">‹ Torna alla home</button></div>`;
+  }else{
+    ks.forEach(k=>{
+      const{s,all,o}=info(k),n=Q?all.filter(c=>c.includes(Q)).length:0;
+      if(Q&&!n)return;
+      const p=all.length?Math.round(o/all.length*100):0;
+      h+=`<button class="sc ${p==100?"done":""}" data-open="${k}"><span class="sk">${k}</span><span class="cnt">${o}/${all.length}</span><span class="n">${esc(s.name||"")}${p==100?" · Completa 🏆":""}${Q?" · "+n+" trovate":""}</span><div class="bar"><u style="width:${p}%"></u></div></button>`;
+    });
+    if(!ks.length)h=`<div class="empty"><p><b>Benvenuto!</b><br>Inizia creando una serie o importando il tuo file Excel.</p><div class="row"><button class="p" data-go="add">Crea una serie</button><button data-go="data">Importa file</button></div></div>`;
+    else if(!h)h=`<div class="empty">Nessuna carta trovata${Q?" per «"+esc(Q)+"»":""}.</div>`;
+  }
   $("list").innerHTML=h;$("hint").hidden=!ks.length;
   const pc=T?Math.round(O/T*100):0;
   $("tot").textContent=O+"/"+T;$("pct").textContent=T?pc+"%":"";$("ring").style.setProperty("--p",pc);
@@ -188,13 +220,16 @@ $("list").addEventListener("pointerdown",e=>{const b=e.target.closest(".chip");i
 $("list").addEventListener("contextmenu",e=>{if(e.target.closest(".chip"))e.preventDefault()});
 $("list").onclick=async e=>{
   const g=e.target.closest("[data-go]");if(g)return view(g.dataset.go);
+  if(e.target.closest("[data-back]")){CS=null;render();return scrollTo(0,0)}
+  const op=e.target.closest("[data-open]");if(op){CS=op.dataset.open;render();return scrollTo(0,0)}
+  const ft=e.target.closest("[data-f]");if(ft){flt=ft.dataset.f;render();return}
   const b=e.target.closest("[data-a]");if(!b)return;
   if(lpd){lpd=false;return}
   const a=b.dataset.a,s=b.dataset.s,cs=D.series[s].cards;
   if(a=="t"){const c=b.dataset.c;cs[c]=cs[c]>0?0:1;save();render()}
   else if(a=="all")mut(()=>{for(const k in cs)cs[k]=Math.max(1,cs[k])},"Serie "+s+": le hai tutte.");
   else if(a=="none")mut(()=>{for(const k in cs)cs[k]=0},"Serie "+s+" azzerata.");
-  else if(a=="del")mut(()=>{delete D.series[s];open.delete(s)},"Serie "+s+" eliminata.");
+  else if(a=="del")mut(()=>{delete D.series[s];open.delete(s);if(CS===s)CS=null},"Serie "+s+" eliminata.");
   else if(a=="cp"){
     const l=Object.keys(cs).filter(k=>!(cs[k]>0)).sort().join("\n");
     if(!l)return toast("Non ti manca nessuna carta!");
@@ -221,18 +256,51 @@ $("addS").onclick=()=>{
   open.add(c);save();render();$("sc").value=$("sn").value=$("snm").value="";view("col");toast("Serie "+c+" creata con "+n+" carte.");
 };
 $("addC").onclick=()=>{
-  const f=norm($("cf").value),x=Math.min(9,parseInt($("cv").value)||0);
-  let code=norm($("cc").value);
-  if(f){const o=code.match(/^([A-Z]{1,4}\d{2})-(\d{3})$/);if(!o||!/^[A-Z]{1,4}\d{2}$/.test(f))return toast("Per una ristampa scrivi il codice originale (es. OP01-016) e la serie dove l’hai trovata (es. OP04).");code=f+"-"+o[2]+"_R-"+o[1]+"_1"}
-  const m=code.match(RE);
+  const code=norm($("cc").value),m=code.match(RE);
   if(!m)return toast("Codice non valido. Esempio: OP01-016.");
-  const g=m[1],s=ensure(g),keys=[],base=m[1]+"-"+m[2];
-  if(m[4]){const pre=code.replace(/_\d+$/,"_");let n=1;const nx=()=>{while(pre+n in s.cards||keys.includes(pre+n))n++;return pre+n};
-    keys.push(f?nx():code);for(let i=1;i<=x;i++)keys.push(nx())}
-  else{keys.push(code);for(let i=1;i<=x;i++)keys.push(base+"_P"+i)}
-  keys.forEach(k=>{s.cards[k]=$("cown").checked?Math.max(1,s.cards[k]||0):(s.cards[k]||0)});
-  open.add(g);save();render();$("cc").value=$("cv").value=$("cf").value="";
-  toast(keys.length>1?"Aggiunte "+keys.length+" versioni di "+base+".":"Carta "+keys[0]+" aggiunta.");
+  const c=ensure(m[1]).cards;
+  c[code]=$("cown").checked?Math.max(1,c[code]||0):(c[code]||0);
+  save();render();$("cc").value="";toast("Carta "+code+" aggiunta.");
+};
+let dt="x";
+function fillSel(){
+  const ks=Object.keys(D.series).sort(),a=$("dS"),pv=a.value;
+  a.innerHTML=ks.length?ks.map(k=>`<option>${k}</option>`).join(""):`<option value="">Nessuna serie</option>`;
+  if(ks.includes(pv))a.value=pv;
+  $("dL").innerHTML=ks.map(k=>`<option value="${k}">`).join("");
+  fillC();
+}
+function fillC(){
+  const sr=D.series[$("dS").value],b=$("dC"),pv=b.value;
+  const cs=sr?Object.keys(sr.cards).filter(c=>/^[A-Z]{1,4}\d{2}-\d{3}$/.test(c)).sort():[];
+  b.innerHTML=cs.length?cs.map(c=>`<option>${c}</option>`).join(""):`<option value="">Nessuna carta</option>`;
+  if(cs.includes(pv))b.value=pv;
+  pvw();
+}
+function plan(){
+  const sr=$("dS").value,c=$("dC").value,n=Math.max(1,Math.min(20,parseInt($("dN").value)||1));
+  if(!sr||!c)return{err:"Scegli la serie e la carta da duplicare."};
+  const o=c.match(/^([A-Z]{1,4}\d{2})-(\d{3})$/);let g=sr,pre=c+"_P";
+  if(dt==="r"){const f=norm($("dF").value);if(!/^[A-Z]{1,4}\d{2}$/.test(f))return{err:"Indica la serie dove hai trovato la ristampa (es. OP04)."};g=f;pre=f+"-"+o[2]+"_R-"+o[1]+"_"}
+  const cs=(D.series[g]||{cards:{}}).cards,keys=[];
+  for(let i=1;keys.length<n;i++)if(!(pre+i in cs))keys.push(pre+i);
+  return{g,keys,c,n};
+}
+function pvw(){const p=plan();$("dP").textContent=p.err?"":"Verranno create: "+p.keys.join(", ")}
+function fillX(){
+  const a=$("rX"),pv=a.value;let h="";
+  Object.keys(D.series).sort().forEach(k=>{const cs=Object.keys(D.series[k].cards).filter(c=>/_P\d+$|_R-/.test(c)).sort();if(cs.length)h+=`<optgroup label="${k}">${cs.map(c=>`<option>${c}</option>`).join("")}</optgroup>`});
+  a.innerHTML=h||`<option value="">Nessun duplicato o ristampa</option>`;
+  if([...a.options].some(o=>o.value===pv))a.value=pv;
+}
+$("rXb").onclick=()=>{const c=$("rX").value,m=c&&c.match(RE);if(!m||!D.series[m[1]])return toast("Non c’è nulla da rimuovere.");mut(()=>{delete D.series[m[1]].cards[c]},"Rimossa "+c+".")};
+$("dS").onchange=fillC;
+["input","change"].forEach(t=>$("v-add").addEventListener(t,e=>{if(e.target.closest("#dT"))return;if(e.target.id!=="dS")pvw()}));
+$("dT").onclick=e=>{const b=e.target.closest("button");if(!b)return;dt=b.dataset.t;document.querySelectorAll("#dT button").forEach(x=>x.classList.toggle("on",x===b));$("dFw").hidden=dt!=="r";pvw()};
+$("dA").onclick=()=>{
+  const p=plan();if(p.err)return toast(p.err);
+  const sr=ensure(p.g);p.keys.forEach(k=>{sr.cards[k]=$("dO").checked?1:0});
+  save();render();toast("Aggiunte "+p.n+(dt==="r"?" ristampe":" versioni extra")+" di "+p.c+".");
 };
 $("remC").onclick=()=>{
   const code=norm($("cc").value),m=code.match(RE),g=m&&m[1];
@@ -270,7 +338,7 @@ $("rs").onclick=()=>{
   catch(e){toast("Backup non valido.")}
 };
 $("xl").onclick=async()=>{
-  if(typeof XLSX==="undefined")return toast("Libreria Excel non caricata: riprova con la connessione attiva.");
+  if(!DL||typeof XLSX==="undefined")return toast("Il salvataggio del file non è disponibile qui.");
   const ks=Object.keys(D.series).sort(),rows=[["Codice","Quantità","Serie"]],names=[["Serie","Nome"]];
   ks.forEach(k=>{names.push([k,D.series[k].name||""]);Object.keys(D.series[k].cards).sort().forEach(c=>rows.push([c,D.series[k].cards[c],k]))});
   if(rows.length<2)return toast("Non ci sono carte da salvare.");
@@ -279,13 +347,14 @@ $("xl").onclick=async()=>{
     XLSX.utils.book_append_sheet(wb,XLSX.utils.aoa_to_sheet(rows),"Carte");
     XLSX.utils.book_append_sheet(wb,XLSX.utils.aoa_to_sheet(names),"Serie");
     const buf=XLSX.write(wb,{bookType:"xlsx",type:"array"});
-    const name="carte-one-piece-"+new Date().toISOString().slice(0,10)+".xlsx";
-    const file=new File([buf],name,{type:"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"});
-    if(navigator.canShare&&navigator.canShare({files:[file]})){await navigator.share({files:[file]});toast("Backup pronto: scegli «Salva su File».")}
-    else{const u=URL.createObjectURL(file),a=document.createElement("a");a.href=u;a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(u),4000);toast("Backup Excel scaricato.")}
-  }catch(err){toast(err&&err.name==="AbortError"?"Salvataggio annullato.":"Non riesco a creare il file Excel.")}
+    await DL.save({filename:"carte-one-piece-"+new Date().toISOString().slice(0,10)+".xlsx",data:buf});
+    toast("Backup Excel salvato.");
+  }catch(err){toast(err&&err.code==="declined"?"Salvataggio annullato.":"Non riesco a creare il file Excel.")}
 };
-if("serviceWorker" in navigator)addEventListener("load",()=>navigator.serviceWorker.register("sw.js").catch(()=>{}));
+(function initDl(t){
+  (async()=>{try{DL=window.claude?await claude.use("downloads"):null}catch(e){DL=null}
+    if(DL)$("xl").hidden=false;else if(t<3)setTimeout(()=>initDl(t+1),1000)})();
+})(0);
 render();
 </script>
 </body>
