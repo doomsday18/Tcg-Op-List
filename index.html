@@ -124,8 +124,16 @@ button:focus-visible,input:focus-visible,summary:focus-visible{outline:2px solid
 <p class="mut" id="dP"></p>
 <div class="row"><button class="p" id="dA">Aggiungi</button></div></div>
 
-<div class="box"><h3>Rimuovi duplicati o ristampe</h3>
-<p class="mut">Scegli dall’elenco la versione extra o la ristampa da eliminare.</p>
+<div class="box"><h3>Carte promo (P-xxx)</h3>
+<p class="mut">Scegli la serie che contiene la promo e scrivi solo il numero: la «P» e gli zeri li aggiungo io (26 diventa P-026).</p>
+<label class="f">Serie che contiene la promo<select id="pS"></select></label>
+<label class="f">Numero della promo<input id="pN" type="number" inputmode="numeric" min="1" max="999" placeholder="es. 26"></label>
+<label class="chk"><input type="checkbox" id="pO" checked> La possiedo già</label>
+<p class="mut" id="pP"></p>
+<div class="row"><button class="p" id="pA">Aggiungi promo</button></div></div>
+
+<div class="box"><h3>Rimuovi duplicati, ristampe o promo</h3>
+<p class="mut">Scegli dall’elenco la versione extra, la ristampa o la promo da eliminare.</p>
 <label class="f">Versione da rimuovere<select id="rX"></select></label>
 <div class="row"><button class="d" id="rXb">Rimuovi</button></div></div>
 </section>
@@ -157,8 +165,8 @@ const K="op-cards-v1";
 let D={series:{}},flt="all",Q="",DL=null,tt=null,cur=null,CS=null;const open=new Set();
 try{const s=localStorage.getItem(K);if(s)D=JSON.parse(s)}catch(e){}
 const $=id=>document.getElementById(id);
-const RE=/^([A-Z]{1,4}\d{2})-(\d{3})(_P\d+)?(_R-[A-Z]{1,4}\d{2}_\d+)?$/;
-const lab=c=>{const r=c.match(/^(.*)_R-([A-Z]{1,4}\d{2})_(\d+)$/);return r?r[1]+"<small>ristampa "+r[2]+" n."+r[3]+"</small>":c};
+const RE=/^([A-Z]{1,4}\d{2})(?:-(\d{3})(_P\d+)?(_R-[A-Z]{1,4}\d{2}_\d+)?|_P-(\d{3}))$/;
+const lab=c=>{if(/^[A-Z]{1,4}\d{2}_P-\d{3}$/.test(c))return c+"<small>promo</small>";const r=c.match(/^(.*)_R-([A-Z]{1,4}\d{2})_(\d+)$/);return r?r[1]+"<small>ristampa "+r[2]+" n."+r[3]+"</small>":c};
 const norm=c=>String(c==null?"":c).trim().toUpperCase().replace(/\s+/g,"").replace(/[–—−]/g,"-").replace(/^(.*-\d{3})[_#-]?P(\d+)$/,"$1_P$2").replace(/^(.*-\d{3})_?R[-_]?([A-Z]{1,4}\d{2})[_-]?(\d+)$/,"$1_R-$2_$3");
 const esc=t=>String(t).replace(/[&<>"]/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[m]));
 function save(){try{localStorage.setItem(K,JSON.stringify(D))}catch(e){}}
@@ -268,6 +276,7 @@ function fillSel(){
   a.innerHTML=ks.length?ks.map(k=>`<option>${k}</option>`).join(""):`<option value="">Nessuna serie</option>`;
   if(ks.includes(pv))a.value=pv;
   $("dL").innerHTML=ks.map(k=>`<option value="${k}">`).join("");
+  const pp=$("pS"),ppv=pp.value;pp.innerHTML=ks.length?ks.map(k=>`<option>${k}</option>`).join(""):`<option value="">Nessuna serie</option>`;if(ks.includes(ppv))pp.value=ppv;ppw();
   fillC();
 }
 function fillC(){
@@ -289,7 +298,7 @@ function plan(){
 function pvw(){const p=plan();$("dP").textContent=p.err?"":"Verranno create: "+p.keys.join(", ")}
 function fillX(){
   const a=$("rX"),pv=a.value;let h="";
-  Object.keys(D.series).sort().forEach(k=>{const cs=Object.keys(D.series[k].cards).filter(c=>/_P\d+$|_R-/.test(c)).sort();if(cs.length)h+=`<optgroup label="${k}">${cs.map(c=>`<option>${c}</option>`).join("")}</optgroup>`});
+  Object.keys(D.series).sort().forEach(k=>{const cs=Object.keys(D.series[k].cards).filter(c=>/_P\d+$|_P-\d{3}$|_R-/.test(c)).sort();if(cs.length)h+=`<optgroup label="${k}">${cs.map(c=>`<option>${c}</option>`).join("")}</optgroup>`});
   a.innerHTML=h||`<option value="">Nessun duplicato o ristampa</option>`;
   if([...a.options].some(o=>o.value===pv))a.value=pv;
 }
@@ -301,6 +310,14 @@ $("dA").onclick=()=>{
   const p=plan();if(p.err)return toast(p.err);
   const sr=ensure(p.g);p.keys.forEach(k=>{sr.cards[k]=$("dO").checked?1:0});
   save();render();toast("Aggiunte "+p.n+(dt==="r"?" ristampe":" versioni extra")+" di "+p.c+".");
+};
+function pcode(){const s=$("pS").value,n=parseInt($("pN").value);if(!s)return{err:"Scegli la serie che contiene la promo."};if(!(n>=1&&n<=999))return{err:"Inserisci il numero della promo (da 1 a 999)."};return{s,code:s+"_P-"+String(n).padStart(3,"0")}}
+function ppw(){const p=pcode();$("pP").textContent=p.err?"":"Verrà creata: "+p.code}
+$("pN").oninput=ppw;$("pS").onchange=ppw;
+$("pA").onclick=()=>{
+  const p=pcode();if(p.err)return toast(p.err);
+  const c=D.series[p.s].cards;if(p.code in c)return toast("La promo "+p.code+" c’è già.");
+  c[p.code]=$("pO").checked?1:0;$("pN").value="";save();render();toast("Promo "+p.code+" aggiunta.");
 };
 $("remC").onclick=()=>{
   const code=norm($("cc").value),m=code.match(RE),g=m&&m[1];
