@@ -81,6 +81,9 @@ textarea{width:100%;min-height:90px;background:var(--sf);border:1px solid var(--
 select{background:var(--sf);border:1px solid var(--bd);border-radius:12px;padding:9px 11px;min-height:44px;width:100%;color:inherit}label.f select{margin-top:4px;font-weight:400}
 [hidden]{display:none!important}
 button:focus-visible,input:focus-visible,summary:focus-visible{outline:2px solid var(--ac);outline-offset:2px}
+.chip{position:relative}.chip.hr{padding-top:15px}
+.rb{position:absolute;top:2px;right:2px;font:700 9px/1 "Trebuchet MS",system-ui,sans-serif;font-style:normal;letter-spacing:.02em;padding:2px 4px;border-radius:6px;color:#fff;box-shadow:0 0 0 1px rgba(255,255,255,.75)}
+.r-C{background:#6b7a89}.r-UC{background:#2e9e5b}.r-R{background:#1e88e5}.r-SR{background:#f0b400;color:#2a1f00}.r-SEC{background:#8e44ad}.r-L{background:#d32f2f}.r-SP{background:#e91e8c}.r-TR{background:#00a3a3}.r-P{background:#455a64}
 </style>
 </head>
 <body>
@@ -134,6 +137,14 @@ button:focus-visible,input:focus-visible,summary:focus-visible{outline:2px solid
 <p class="mut" id="pP"></p>
 <div class="row"><button class="p" id="pA">Aggiungi promo</button></div></div>
 
+<div class="box"><h3>Rarità delle carte</h3>
+<p class="mut">Imposta la rarità di un gruppo di carte in una volta (es. da 1 a 10 sono Comuni). Per una sola carta scrivi lo stesso numero in «Da» e «A». Lascia «A» vuoto per arrivare fino all’ultima carta.</p>
+<label class="f">Serie<select id="bS"></select></label>
+<div style="display:flex;gap:8px"><label class="f" style="flex:1">Da<input id="bA" type="number" inputmode="numeric" min="1" max="999" placeholder="1"></label><label class="f" style="flex:1">A<input id="bB" type="number" inputmode="numeric" min="1" max="999" placeholder="ultima"></label></div>
+<label class="f">Rarità<select id="bR"><option value="">— togli la rarità —</option><option value="C">C · Comune</option><option value="UC">UC · Non comune</option><option value="R">R · Rara</option><option value="SR">SR · Super rara</option><option value="SEC">SEC · Secret</option><option value="L">L · Leader</option><option value="SP">SP · Special</option><option value="TR">TR · Treasure</option><option value="P">P · Promo</option></select></label>
+<p class="mut" id="bP"></p>
+<div class="row"><button class="p" id="bGo">Applica</button></div></div>
+
 <div class="box"><h3>Rimuovi duplicati, ristampe o promo</h3>
 <p class="mut">Scegli dall’elenco la versione extra, la ristampa o la promo da eliminare.</p>
 <label class="f">Versione da rimuovere<select id="rX"></select></label>
@@ -143,7 +154,7 @@ button:focus-visible,input:focus-visible,summary:focus-visible{outline:2px solid
 <section id="v-data" hidden>
 <h2>Dati e backup</h2>
 <div class="box"><h3>Importa da Excel o CSV</h3>
-<p class="mut">Una carta per riga: codice nella prima colonna, quantità nella seconda (0 = non posseduta). Senza quantità la carta risulta posseduta. Le serie nuove vengono create da sole. Il file del backup si reimporta così com’è.</p>
+<p class="mut">Una carta per riga: codice nella prima colonna, quantità nella seconda (0 = non posseduta). Senza quantità la carta risulta posseduta. Per la rarità aggiungi una colonna con la sigla (C, UC, R, SR, SEC, L, SP, TR, P). Le serie nuove vengono create da sole. Il file del backup si reimporta così com’è.</p>
 <div class="row"><input type="file" id="file" accept=".xlsx,.xls,.csv"></div></div>
 <div class="box"><h3>Backup</h3>
 <p class="mut">I dati restano salvati in questo browser: scarica un backup ogni tanto.</p>
@@ -157,6 +168,7 @@ button:focus-visible,input:focus-visible,summary:focus-visible{outline:2px solid
 <div class="sheet" id="sh" hidden><div class="c" role="dialog" aria-modal="true">
 <h3 id="shT"></h3><p class="mut">Quante copie possiedi?</p>
 <div class="step"><button id="mi" aria-label="Meno">−</button><b id="shN">0</b><button id="pl" aria-label="Più">＋</button></div>
+<label class="f">Rarità<select id="shRar"></select></label>
 <div class="row"><button class="d" id="shR">Rimuovi carta</button><button class="p" id="shX">Fatto</button></div></div></div>
 
 <nav id="nav"><button data-v="col" class="on"><b>📚</b>Collezione</button><button data-v="add"><b>＋</b>Aggiungi</button><button data-v="data"><b>💾</b>Dati</button></nav>
@@ -164,13 +176,17 @@ button:focus-visible,input:focus-visible,summary:focus-visible{outline:2px solid
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <script>
 const K="op-cards-v1";
-let D={series:{}},flt="all",Q="",DL=null,tt=null,cur=null,CS=null;const open=new Set();
+let D={series:{}},flt="all",RF="all",Q="",DL=null,tt=null,cur=null,CS=null;const open=new Set();
 try{const s=localStorage.getItem(K);if(s)D=JSON.parse(s)}catch(e){}
 const $=id=>document.getElementById(id);
 const RE=/^([A-Z]{1,4}\d{2})(?:-(\d{3})(_P\d+)?(_R-[A-Z]{1,4}\d{2}_\d+)?|_P-(\d{3}))$/;
 const lab=c=>{if(/^[A-Z]{1,4}\d{2}_P-\d{3}$/.test(c))return c+"<small>promo</small>";const r=c.match(/^(.*)_R-([A-Z]{1,4}\d{2})_(\d+)$/);return r?r[1]+"<small>ristampa "+r[2]+" n."+r[3]+"</small>":c};
 const norm=c=>String(c==null?"":c).trim().toUpperCase().replace(/\s+/g,"").replace(/[–—−]/g,"-").replace(/^(.*-\d{3})[_#-]?P(\d+)$/,"$1_P$2").replace(/^(.*-\d{3})_?R[-_]?([A-Z]{1,4}\d{2})[_-]?(\d+)$/,"$1_R-$2_$3");
 const esc=t=>String(t).replace(/[&<>"]/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[m]));
+const RAR=["C","UC","R","SR","SEC","L","SP","TR","P"];
+const RN={C:"Comune",UC:"Non comune",R:"Rara",SR:"Super rara",SEC:"Secret",L:"Leader",SP:"Special",TR:"Treasure",P:"Promo"};
+const rnorm=v=>{const t=String(v==null?"":v).trim().toUpperCase().replace(/[^A-Z]/g,""),m={COMMON:"C",COMUNE:"C",UNCOMMON:"UC",NONCOMUNE:"UC",RARE:"R",RARA:"R",SUPERRARE:"SR",SUPERRARA:"SR",SECRET:"SEC",SECRETRARE:"SEC",LEADER:"L",SPECIAL:"SP",SPECIALCARD:"SP",TREASURE:"TR",TREASURERARE:"TR",PROMO:"P"};return RAR.includes(t)?t:(m[t]||"")};
+const rarOf=(k,c)=>{const S=D.series[k],r=S&&S.rar;if(r){const x=r[c]||r[c.replace(/_P\d+$|_R-.*$/,"")];if(x)return x}return /_P-\d{3}$/.test(c)?"P":""};
 function save(){try{localStorage.setItem(K,JSON.stringify(D))}catch(e){}}
 function ensure(k,name){if(!D.series[k])D.series[k]={name:name||"",cards:{}};else if(name)D.series[k].name=name;return D.series[k]}
 function toast(t,snap){
@@ -187,7 +203,7 @@ function view(v){
 $("nav").onclick=e=>{const b=e.target.closest("button");if(!b)return;if(b.dataset.v==="col"&&CS){CS=null;render()}view(b.dataset.v)};
 
 function info(k){const s=D.series[k],all=Object.keys(s.cards).sort((a,b)=>(a.includes("_R-")-b.includes("_R-"))||(a<b?-1:a>b?1:0));return{s,all,o:all.filter(c=>s.cards[c]>0).length}}
-function render(){fillSel();fillX();
+function render(){fillSel();fillX();fillB();
   const ks=Object.keys(D.series).sort();let T=0,O=0,h="";
   ks.forEach(k=>{const i=info(k);T+=i.all.length;O+=i.o});
   if(CS&&!D.series[CS])CS=null;
@@ -197,12 +213,15 @@ function render(){fillSel();fillX();
   document.querySelectorAll("#seg button").forEach(x=>x.classList.toggle("on",x.dataset.f===flt));
   if(inS){
     const{s,all,o}=info(CS),p=all.length?Math.round(o/all.length*100):0;
-    const cs=all.filter(c=>(flt=="all"||(flt=="miss")!=(s.cards[c]>0))&&(!Q||c.includes(Q)));
-    const chips=cs.map(c=>`<button class="chip ${s.cards[c]>0?"on":""}" data-a="t" data-s="${CS}" data-c="${c}">${s.cards[c]>0?"✓ ":""}${lab(c)}${s.cards[c]>1?`<i>×${s.cards[c]}</i>`:""}</button>`).join("");
+    const rc={};all.forEach(c=>{const r=rarOf(CS,c);if(r)rc[r]=(rc[r]||0)+1});if(RF!="all"&&!rc[RF])RF="all";
+    const rsel=Object.keys(rc).length?`<select id="rf" aria-label="Filtra per rarità" style="margin-top:8px"><option value="all">Tutte le rarità</option>${RAR.filter(r=>rc[r]).map(r=>`<option value="${r}" ${RF==r?"selected":""}>${r} · ${RN[r]} (${rc[r]})</option>`).join("")}</select>`:"";
+    const cs=all.filter(c=>(flt=="all"||(flt=="miss")!=(s.cards[c]>0))&&(!Q||c.includes(Q))&&(RF=="all"||rarOf(CS,c)==RF));
+    const chips=cs.map(c=>`<button class="chip ${s.cards[c]>0?"on":""}${rarOf(CS,c)?" hr":""}" data-a="t" data-s="${CS}" data-c="${c}">${rarOf(CS,c)?`<em class="rb r-${rarOf(CS,c)}">${rarOf(CS,c)}</em>`:""}${s.cards[c]>0?"✓ ":""}${lab(c)}${s.cards[c]>1?`<i>×${s.cards[c]}</i>`:""}</button>`).join("");
     const sg=[["all","Tutte"],["miss","Mancanti"],["own","Possedute"]].map(x=>`<button data-f="${x[0]}" class="${flt==x[0]?"on":""}">${x[1]}</button>`).join("");
     h=`<div class="stop"><button class="bk" data-back="1" aria-label="Torna alla home">‹ Home</button><div class="st"><b>${CS}${p==100?" 🏆":""}</b><span>${esc(s.name||"")}</span></div><span class="cnt">${o}/${all.length}</span></div>
     <div class="bar sb"><u style="width:${p}%"></u></div>
     <div class="seg">${sg}</div>
+    ${rsel}
     <div class="grid">${chips||`<p class="mut" style="grid-column:1/-1">Nessuna carta da mostrare con questo filtro.</p>`}</div>
     <div class="row"><button data-a="all" data-s="${CS}">Le ho tutte</button><button data-a="cp" data-s="${CS}">Copia mancanti</button><button data-a="none" data-s="${CS}">Azzera</button><button class="d" data-a="del" data-s="${CS}">Elimina serie</button></div>
     <div class="row"><button class="p" data-back="1">‹ Torna alla home</button></div>`;
@@ -231,7 +250,7 @@ $("list").addEventListener("contextmenu",e=>{if(e.target.closest(".chip"))e.prev
 $("list").onclick=async e=>{
   const g=e.target.closest("[data-go]");if(g)return view(g.dataset.go);
   if(e.target.closest("[data-back]")){CS=null;render();return scrollTo(0,0)}
-  const op=e.target.closest("[data-open]");if(op){CS=op.dataset.open;render();return scrollTo(0,0)}
+  const op=e.target.closest("[data-open]");if(op){CS=op.dataset.open;RF="all";render();return scrollTo(0,0)}
   const ft=e.target.closest("[data-f]");if(ft){flt=ft.dataset.f;render();return}
   const b=e.target.closest("[data-a]");if(!b)return;
   if(lpd){lpd=false;return}
@@ -248,8 +267,10 @@ $("list").onclick=async e=>{
 };
 $("list").addEventListener("toggle",e=>{const k=e.target.dataset&&e.target.dataset.k;if(!k)return;e.target.open?open.add(k):open.delete(k)},true);
 
-function sheet(s,c){cur={s,c};$("shT").textContent=c;$("shN").textContent=D.series[s].cards[c]||0;$("sh").hidden=false}
+function sheet(s,c){cur={s,c};$("shT").textContent=c;$("shN").textContent=D.series[s].cards[c]||0;$("shRar").innerHTML='<option value="">— nessuna —</option>'+RAR.map(r=>`<option value="${r}">${r} · ${RN[r]}</option>`).join("");$("shRar").value=rarOf(s,c);$("sh").hidden=false}
 function setQ(n){D.series[cur.s].cards[cur.c]=Math.max(0,Math.min(99,n));$("shN").textContent=D.series[cur.s].cards[cur.c];save();render()}
+$("list").addEventListener("change",e=>{if(e.target.id=="rf"){RF=e.target.value;render()}});
+$("shRar").onchange=()=>{const{s,c}=cur,v=$("shRar").value,S=D.series[s];S.rar=S.rar||{};if(v)S.rar[c]=v;else delete S.rar[c];save();render()};
 $("mi").onclick=()=>setQ((D.series[cur.s].cards[cur.c]||0)-1);
 $("pl").onclick=()=>setQ((D.series[cur.s].cards[cur.c]||0)+1);
 $("shX").onclick=()=>{$("sh").hidden=true};
@@ -327,27 +348,32 @@ $("remC").onclick=()=>{
   mut(()=>{delete D.series[g].cards[code]},"Carta "+code+" rimossa.");$("cc").value="";
 };
 
+function fillB(){const ks=Object.keys(D.series).sort(),a=$("bS"),pv=a.value;a.innerHTML=ks.length?ks.map(k=>`<option>${k}</option>`).join(""):`<option value="">Nessuna serie</option>`;if(ks.includes(pv))a.value=pv;bpw()}
+function bplan(){const k=$("bS").value,S=D.series[k];if(!S)return{err:"Scegli la serie."};const a=parseInt($("bA").value)||1,b=parseInt($("bB").value)||9999;if(b<a)return{err:"«A» deve essere maggiore o uguale a «Da»."};const keys=Object.keys(S.cards).filter(c=>{const m=c.match(/^[A-Z]{1,4}\d{2}-(\d{3})$/);return m&&+m[1]>=a&&+m[1]<=b}).sort();if(!keys.length)return{err:"In questa serie non ci sono carte in quell’intervallo."};return{k,keys}}
+function bpw(){const p=bplan();$("bP").textContent=p.err?"":"Carte interessate: "+p.keys.length+" ("+p.keys[0]+" … "+p.keys[p.keys.length-1]+")"}
+["bS","bA","bB"].forEach(i=>$(i).oninput=bpw);
+$("bGo").onclick=()=>{const p=bplan();if(p.err)return toast(p.err);const v=$("bR").value;mut(()=>{const S=D.series[p.k];S.rar=S.rar||{};p.keys.forEach(c=>{if(v)S.rar[c]=v;else delete S.rar[c]})},v?"Rarità "+v+" impostata su "+p.keys.length+" carte.":"Rarità tolta da "+p.keys.length+" carte.")};
 $("file").onchange=async e=>{
   const f=e.target.files[0];if(!f)return;
   try{
     const wb=XLSX.read(await f.arrayBuffer(),{type:"array"}),snap=JSON.stringify(D);
-    let n=0,series=new Set();
+    let n=0,nr=0,series=new Set();
     wb.SheetNames.forEach(sn=>{
       XLSX.utils.sheet_to_json(wb.Sheets[sn],{header:1,defval:""}).forEach(r=>{
         if(sn==="Serie"){const k=norm(r[0]);if(/^[A-Z]{1,4}\d{2}$/.test(k)&&r[1]){ensure(k,String(r[1]).trim())}return}
         const i=r.findIndex(c=>RE.test(norm(c)));if(i<0)return;
-        const code=norm(r[i]),m=code.match(RE),v=r[i+1];
+        const code=norm(r[i]),m=code.match(RE);let v=r[i+1],rr=rnorm(v);const onlyR=!!rr;if(rr)v="";else rr=r.slice(i+2).map(rnorm).find(x=>x)||"";
         let q=1;
         if(v!==""&&v!==undefined){
           const x=Number(String(v).replace(",","."));
           if(!isNaN(x))q=Math.max(0,Math.floor(x));
           else q=/^(no|n|false|f|-|x?no)$/i.test(String(v).trim())?0:1;
         }
-        ensure(m[1]).cards[code]=q;series.add(m[1]);n++;
+        const S=ensure(m[1]);if(onlyR){if(!(code in S.cards))S.cards[code]=0}else S.cards[code]=q;if(rr){S.rar=S.rar||{};S.rar[code]=rr;nr++}series.add(m[1]);n++;
       });
     });
     save();render();
-    if(n){view("col");toast("Importate "+n+" carte in "+series.size+" serie.",snap)}else toast("Nessun codice carta trovato nel file.");
+    if(n){view("col");toast("Importate "+n+" carte in "+series.size+" serie."+(nr?" Rarità lette: "+nr+".":""),snap)}else toast("Nessun codice carta trovato nel file.");
   }catch(err){toast("Non riesco a leggere il file. Usa .xlsx, .xls o .csv.")}
   e.target.value="";
 };
@@ -358,8 +384,8 @@ $("rs").onclick=()=>{
 };
 $("xl").onclick=async()=>{
   if(!DL||typeof XLSX==="undefined")return toast("Il salvataggio del file non è disponibile qui.");
-  const ks=Object.keys(D.series).sort(),rows=[["Codice","Quantità","Serie"]],names=[["Serie","Nome"]];
-  ks.forEach(k=>{names.push([k,D.series[k].name||""]);Object.keys(D.series[k].cards).sort().forEach(c=>rows.push([c,D.series[k].cards[c],k]))});
+  const ks=Object.keys(D.series).sort(),rows=[["Codice","Quantità","Serie","Rarità"]],names=[["Serie","Nome"]];
+  ks.forEach(k=>{names.push([k,D.series[k].name||""]);Object.keys(D.series[k].cards).sort().forEach(c=>rows.push([c,D.series[k].cards[c],k,rarOf(k,c)]))});
   if(rows.length<2)return toast("Non ci sono carte da salvare.");
   try{
     const wb=XLSX.utils.book_new();
@@ -371,7 +397,7 @@ $("xl").onclick=async()=>{
   }catch(err){toast(err&&err.code==="declined"?"Salvataggio annullato.":"Non riesco a creare il file Excel.")}
 };
 (function initDl(t){
-  (async()=>{try{DL=window.claude?await claude.use("downloads"):null}catch(e){DL=null}
+  (async()=>{const web={save:async({filename,data})=>{const a=document.createElement("a");a.href=URL.createObjectURL(new Blob([data],{type:"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"}));a.download=filename;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),4000)}};try{DL=window.claude?await claude.use("downloads"):web}catch(e){DL=web}
     if(DL)$("xl").hidden=false;else if(t<3)setTimeout(()=>initDl(t+1),1000)})();
 })(0);
 render();
