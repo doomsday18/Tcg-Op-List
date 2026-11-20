@@ -84,11 +84,12 @@ button:focus-visible,input:focus-visible,summary:focus-visible{outline:2px solid
 .chip{position:relative}.chip.hr{padding-top:15px}
 .rb{position:absolute;top:2px;right:2px;font:700 9px/1 "Trebuchet MS",system-ui,sans-serif;font-style:normal;letter-spacing:.02em;padding:2px 4px;border-radius:6px;color:#fff;box-shadow:0 0 0 1px rgba(255,255,255,.75)}
 .r-C{background:#6b7a89}.r-UC{background:#2e9e5b}.r-R{background:#1e88e5}.r-SR{background:#f0b400;color:#2a1f00}.r-SEC{background:#8e44ad}.r-L{background:#d32f2f}.r-SP{background:#e91e8c}.r-TR{background:#00a3a3}.r-P{background:#455a64}
+.stats{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap}.stats div{background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255,.28);border-radius:12px;padding:6px 10px;line-height:1.15;font-size:12px}.stats b{display:block;font:700 20px Georgia,serif;font-variant-numeric:tabular-nums}
 </style>
 </head>
 <body>
 <header class="hero"><div class="in">
-<div class="tt"><small>Grand Line · Collezione</small><h1>Le mie carte One Piece</h1><p id="sub"></p></div>
+<div class="tt"><small>Grand Line · Collezione</small><h1>Le mie carte One Piece</h1><p id="sub"></p><div class="stats" id="stats"></div></div>
 <div class="ring" id="ring"><div><span><b id="tot">0/0</b><span id="pct"></span></span></div></div>
 </div></header>
 
@@ -202,23 +203,23 @@ function view(v){
 }
 $("nav").onclick=e=>{const b=e.target.closest("button");if(!b)return;if(b.dataset.v==="col"&&CS){CS=null;render()}view(b.dataset.v)};
 
-function info(k){const s=D.series[k],all=Object.keys(s.cards).sort((a,b)=>(a.includes("_R-")-b.includes("_R-"))||(a<b?-1:a>b?1:0));return{s,all,o:all.filter(c=>s.cards[c]>0).length}}
+function info(k){const s=D.series[k],all=Object.keys(s.cards).sort((a,b)=>(a.includes("_R-")-b.includes("_R-"))||(a<b?-1:a>b?1:0));return{s,all,o:all.filter(c=>s.cards[c]>0).length,q:all.reduce((a,c)=>a+(s.cards[c]>0?s.cards[c]:0),0)}}
 function render(){fillSel();fillX();fillB();
-  const ks=Object.keys(D.series).sort();let T=0,O=0,h="";
-  ks.forEach(k=>{const i=info(k);T+=i.all.length;O+=i.o});
+  const ks=Object.keys(D.series).sort();let T=0,O=0,TC=0,h="";
+  ks.forEach(k=>{const i=info(k);T+=i.all.length;O+=i.o;TC+=i.q});
   if(CS&&!D.series[CS])CS=null;
   const inS=!!CS;
   document.querySelector(".hero").hidden=inS;$("tools").hidden=inS;
   document.querySelector(".wrap").style.paddingTop=inS?"0":"";
   document.querySelectorAll("#seg button").forEach(x=>x.classList.toggle("on",x.dataset.f===flt));
   if(inS){
-    const{s,all,o}=info(CS),p=all.length?Math.round(o/all.length*100):0;
+    const{s,all,o,q}=info(CS),p=all.length?Math.round(o/all.length*100):0;
     const rc={};all.forEach(c=>{const r=rarOf(CS,c);if(r)rc[r]=(rc[r]||0)+1});if(RF!="all"&&!rc[RF])RF="all";
     const rsel=Object.keys(rc).length?`<select id="rf" aria-label="Filtra per rarità" style="margin-top:8px"><option value="all">Tutte le rarità</option>${RAR.filter(r=>rc[r]).map(r=>`<option value="${r}" ${RF==r?"selected":""}>${r} · ${RN[r]} (${rc[r]})</option>`).join("")}</select>`:"";
     const cs=all.filter(c=>(flt=="all"||(flt=="miss")!=(s.cards[c]>0))&&(!Q||c.includes(Q))&&(RF=="all"||rarOf(CS,c)==RF));
     const chips=cs.map(c=>`<button class="chip ${s.cards[c]>0?"on":""}${rarOf(CS,c)?" hr":""}" data-a="t" data-s="${CS}" data-c="${c}">${rarOf(CS,c)?`<em class="rb r-${rarOf(CS,c)}">${rarOf(CS,c)}</em>`:""}${s.cards[c]>0?"✓ ":""}${lab(c)}${s.cards[c]>1?`<i>×${s.cards[c]}</i>`:""}</button>`).join("");
     const sg=[["all","Tutte"],["miss","Mancanti"],["own","Possedute"]].map(x=>`<button data-f="${x[0]}" class="${flt==x[0]?"on":""}">${x[1]}</button>`).join("");
-    h=`<div class="stop"><button class="bk" data-back="1" aria-label="Torna alla home">‹ Home</button><div class="st"><b>${CS}${p==100?" 🏆":""}</b><span>${esc(s.name||"")}</span></div><span class="cnt">${o}/${all.length}</span></div>
+    h=`<div class="stop"><button class="bk" data-back="1" aria-label="Torna alla home">‹ Home</button><div class="st"><b>${CS}${p==100?" 🏆":""}</b><span>${esc(s.name||"")}${q>o?` · ${q} copie`:""}</span></div><span class="cnt">${o}/${all.length}</span></div>
     <div class="bar sb"><u style="width:${p}%"></u></div>
     <div class="seg">${sg}</div>
     ${rsel}
@@ -227,10 +228,10 @@ function render(){fillSel();fillX();fillB();
     <div class="row"><button class="p" data-back="1">‹ Torna alla home</button></div>`;
   }else{
     ks.forEach(k=>{
-      const{s,all,o}=info(k),n=Q?all.filter(c=>c.includes(Q)).length:0;
+      const{s,all,o,q}=info(k),n=Q?all.filter(c=>c.includes(Q)).length:0;
       if(Q&&!n)return;
       const p=all.length?Math.round(o/all.length*100):0;
-      h+=`<button class="sc ${p==100?"done":""}" data-open="${k}"><span class="sk">${k}</span><span class="cnt">${o}/${all.length}</span><span class="n">${esc(s.name||"")}${p==100?" · Completa 🏆":""}${Q?" · "+n+" trovate":""}</span><div class="bar"><u style="width:${p}%"></u></div></button>`;
+      h+=`<button class="sc ${p==100?"done":""}" data-open="${k}"><span class="sk">${k}</span><span class="cnt">${o}/${all.length}</span><span class="n">${esc(s.name||"")}${q>o?" · "+q+" copie":""}${p==100?" · Completa 🏆":""}${Q?" · "+n+" trovate":""}</span><div class="bar"><u style="width:${p}%"></u></div></button>`;
     });
     if(!ks.length)h=`<div class="empty"><p><b>Benvenuto!</b><br>Inizia creando una serie o importando il tuo file Excel.</p><div class="row"><button class="p" data-go="add">Crea una serie</button><button data-go="data">Importa file</button></div></div>`;
     else if(!h)h=`<div class="empty">Nessuna carta trovata${Q?" per «"+esc(Q)+"»":""}.</div>`;
@@ -239,6 +240,7 @@ function render(){fillSel();fillX();fillB();
   const pc=T?Math.round(O/T*100):0;
   $("tot").textContent=O+"/"+T;$("pct").textContent=T?pc+"%":"";$("ring").style.setProperty("--p",pc);
   $("sub").textContent=T?"Ti mancano "+(T-O)+" carte.":"Tieni traccia delle tue carte, serie per serie.";
+  $("stats").innerHTML=T?`<div><b>${TC}</b>carte totali (con doppioni)</div><div><b>${O}</b>carte diverse (senza doppioni)</div>`:"";
 }
 $("q").oninput=e=>{Q=norm(e.target.value);render()};
 $("seg").onclick=e=>{const b=e.target.closest("button");if(!b)return;flt=b.dataset.f;document.querySelectorAll("#seg button").forEach(x=>x.classList.toggle("on",x===b));render()};
@@ -397,7 +399,7 @@ $("xl").onclick=async()=>{
   }catch(err){toast(err&&err.code==="declined"?"Salvataggio annullato.":"Non riesco a creare il file Excel.")}
 };
 (function initDl(t){
-  (async()=>{const web={save:async({filename,data})=>{const a=document.createElement("a");a.href=URL.createObjectURL(new Blob([data],{type:"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"}));a.download=filename;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),4000)}};try{DL=window.claude?await claude.use("downloads"):web}catch(e){DL=web}
+  (async()=>{try{DL=window.claude?await claude.use("downloads"):null}catch(e){DL=null}
     if(DL)$("xl").hidden=false;else if(t<3)setTimeout(()=>initDl(t+1),1000)})();
 })(0);
 render();
